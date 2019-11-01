@@ -7,14 +7,20 @@ const helpers = require('./helper');
  * Metodo del Login
  */
 passport.use('local.signin', new LocalStrategy({
+    usernameField: 'email',
     passwordField: 'password',
-    emailField: 'email',
     passReqToCallback: true
-}, async(req, email, password, done) => {
-    console.log(req.body)
-    console.log(email)
+}, async(req, username, password, done) => {
+    const {email} = req.body;
+    const testEmail = {
+        email
+    };
+    console.log(testEmail)
     console.log(password)
-    const rows = await pool.query('SELECT * FROM accounts WHERE email = ?', [email]);
+    
+    const rows = await pool.query('SELECT * FROM accounts WHERE email = ?', [testEmail.email]);
+    
+    console.log(rows);
     if (rows.length > 0) {
         const user = rows[0];
         const validPassword = await helpers.matchPassword(password, user.password);

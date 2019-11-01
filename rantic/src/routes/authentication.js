@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const passport = require('passport');
+const {isLoggedIn} = require('../lib/auth');
 
 /**
  * Ruta de registro
@@ -15,6 +16,9 @@ router.post('/signup', passport.authenticate('local.signup', {
     failureFlash: true
 }));
 
+/**
+ * Ruta de Login
+ */
 router.get('/signin', (req, res) =>{
     res.render('auth/signin');
 });
@@ -23,12 +27,17 @@ router.post('/signin', (req, res, next) => {
     passport.authenticate('local.signin', {
         successRedirect: '/profile',
         failureRedirect: '/signin',
-        failWithError: true
+        failureFlash: true
     })(req, res, next);
 });
 
-router.get('/profile', (req,res) => {
-    res.send('this is your profile');
+router.get('/profile', isLoggedIn, (req,res) => {
+    res.render('profile');
 });
+
+router.get('/logout', (req, res) =>{
+    req.logOut();
+    res.redirect('/signin');
+})
 
 module.exports = router;

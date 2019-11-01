@@ -8,10 +8,10 @@ router.get('/add', isLoggedIn, (req, res) => {
 })
 
 router.post('/add', isLoggedIn, async (req, res)=>{
-    const {title, url, description}= req.body;
+    const {description}= req.body;
     const newOrder = {
         description,
-        id: '1'
+        id: req.user.id
     };
     await pool.query('INSERT INTO orders SET ?', [newOrder]);
     req.flash('success', 'Order added');
